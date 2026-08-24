@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DG YOUTUBE DOWNLOADER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b, #090d16);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo h1 span {
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .logo p {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            background: transparent;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .input-group input::placeholder {
+            color: #888;
+        }
+
+        .input-group button {
+            padding: 0 30px;
+            border: none;
+            outline: none;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+        }
+
+        .input-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.6);
+        }
+
+        .loading {
+            display: none;
+            margin: 25px 0;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-box {
+            display: none;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 25px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .video-info img {
+            width: 120px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .video-info h3 {
+            font-size: 1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 12px 18px;
+            background: #ff0000;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            font-size: 0.95rem;
+        }
+
+        .download-btn:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 576px) {
+            .input-group {
+                flex-direction: column;
+                background: transparent;
+                border: none;
+                padding: 0;
+                gap: 10px;
+            }
+            .input-group input {
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+            }
+            .input-group button {
+                padding: 15px;
+                width: 100%;
+            }
+            .container {
+                padding: 25px 20px;
+            }
+            .video-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .video-info img {
+                width: 100%;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <h1>DG <span>YOUTUBE</span></h1>
+            <p>Paste YouTube video link below to download!</p>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="Paste YouTube video link here...">
+            <button onclick="downloadYoutube()">
+                <i class="fa-solid fa-download"></i> Download
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;">Fetching video info...</p>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="result-box" id="resultBox">
+            <div class="video-info" id="videoInfo"></div>
+            <div id="downloadLinks"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 DG DOWNLOADER. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        async function downloadYoutube() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const loading = document.getElementById('loading');
+            const resultBox = document.getElementById('resultBox');
+            const errorMsg = document.getElementById('errorMsg');
+            const downloadLinks = document.getElementById('downloadLinks');
+            const videoInfo = document.getElementById('videoInfo');
+
+            resultBox.style.display = "none";
+            errorMsg.style.display = "none";
+            downloadLinks.innerHTML = "";
+            videoInfo.innerHTML = "";
+
+            if (!urlInput) {
+                errorMsg.innerText = "Please enter a valid YouTube URL!";
+                errorMsg.style.display = "block";
+                return;
+            }
+
+            loading.style.display = "block";
+
+            try {
+                const apiURL = `https://dg-youtube-api.onrender.com/api/youtube?url=${encodeURIComponent(urlInput)}`;
+                const response = await fetch(apiURL);
+                const data = await response.json();
+
+                loading.style.display = "none";
+
+                if (data.status && data.result) {
+                    videoInfo.innerHTML = `
+                        <img src="${data.result.thumbnail}" alt="Thumbnail">
+                        <h3>${data.result.title}</h3>
+                    `;
+
+                    let linksHTML = '';
+                    data.result.formats.slice(0, 3).forEach(fmt => {
+                        const downloadUrl = `https://dg-youtube-api.onrender.com/api/download?url=${encodeURIComponent(fmt.url)}&title=${encodeURIComponent(data.result.title)}`;
+                        linksHTML += `
+                            <a href="${downloadUrl}" class="download-btn" download>
+                                <span><i class="fa-solid fa-video" style="margin-right:8px;"></i> Quality: ${fmt.quality || 'Standard'} (${fmt.container})</span>
+                                <span><i class="fa-solid fa-download"></i></span>
+                            </a>
+                        `;
+                    });
+
+                    downloadLinks.innerHTML = linksHTML;
+                    resultBox.style.display = "block";
+                } else {
+                    errorMsg.innerText = data.error || "Could not fetch YouTube video.";
+                    errorMsg.style.display = "block";
+                }
+            } catch (error) {
+                loading.style.display = "none";
+                errorMsg.innerText = "Server is waking up. Please wait 30 seconds and try clicking Download again!";
+                errorMsg.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
