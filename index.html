@@ -208,7 +208,7 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;">Processing video link...</p>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;" id="loadingText">Processing video link...</p>
         </div>
 
         <div class="error-msg" id="errorMsg"></div>
@@ -229,6 +229,7 @@
         async function downloadYoutube() {
             const urlInput = document.getElementById('urlInput').value.trim();
             const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
             const resultBox = document.getElementById('resultBox');
             const errorMsg = document.getElementById('errorMsg');
             const downloadLinks = document.getElementById('downloadLinks');
@@ -244,16 +245,18 @@
             }
 
             loading.style.display = "block";
+            loadingText.innerText = "Connecting to server (Waking up)...";
 
             try {
-                // Requesting through our Render Backend API
-                const apiURL = `https://dg-youtube-api.onrender.com/api/youtube?url=${encodeURIComponent(urlInput)}`;
-                const response = await fetch(apiURL);
+                // Connecting to your new Render API
+                const renderAPI = `https://dg-youtube-api.onrender.com/download?url=${encodeURIComponent(urlInput)}`;
+                
+                const response = await fetch(renderAPI);
                 const data = await response.json();
 
                 loading.style.display = "none";
 
-                if (data.status && data.download_url) {
+                if (data.success && data.download_url) {
                     downloadLinks.innerHTML = `
                         <a href="${data.download_url}" class="download-btn" target="_blank" download="YouTube-Video.mp4">
                             <span><i class="fa-solid fa-video" style="margin-right:8px;"></i> Download Video (HD/MP4)</span>
@@ -267,7 +270,7 @@
                 }
             } catch (error) {
                 loading.style.display = "none";
-                errorMsg.innerText = "Server is waking up. Please wait 10 seconds and try again!";
+                errorMsg.innerText = "Server is starting up. Please wait 10 seconds and try again!";
                 errorMsg.style.display = "block";
             }
         }
