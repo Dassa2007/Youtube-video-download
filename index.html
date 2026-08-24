@@ -138,46 +138,27 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .video-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .video-info img {
-            width: 120px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .video-info h3 {
-            font-size: 1rem;
-            color: #fff;
-            font-weight: 600;
-        }
-
         .download-btn {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 12px 18px;
+            padding: 14px 20px;
             background: #ff0000;
             color: #fff;
             text-align: center;
             text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
             margin-top: 10px;
             transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
-            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
         }
 
         .download-btn:hover {
             background: #cc0000;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
         }
 
         .error-msg {
@@ -219,14 +200,6 @@
             .container {
                 padding: 25px 20px;
             }
-            .video-info {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .video-info img {
-                width: 100%;
-                height: 140px;
-            }
         }
     </style>
 </head>
@@ -247,13 +220,15 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;">Fetching video info...</p>
+            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;">Processing video link...</p>
         </div>
 
         <div class="error-msg" id="errorMsg"></div>
 
         <div class="result-box" id="resultBox">
-            <div class="video-info" id="videoInfo"></div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #ff0000; font-weight: 600;">
+                <i class="fa-solid fa-circle-check"></i> Video Ready to Download!
+            </div>
             <div id="downloadLinks"></div>
         </div>
     </div>
@@ -269,12 +244,10 @@
             const resultBox = document.getElementById('resultBox');
             const errorMsg = document.getElementById('errorMsg');
             const downloadLinks = document.getElementById('downloadLinks');
-            const videoInfo = document.getElementById('videoInfo');
 
             resultBox.style.display = "none";
             errorMsg.style.display = "none";
             downloadLinks.innerHTML = "";
-            videoInfo.innerHTML = "";
 
             if (!urlInput) {
                 errorMsg.innerText = "Please enter a valid YouTube URL!";
@@ -285,38 +258,39 @@
             loading.style.display = "block";
 
             try {
-                const apiURL = `https://dg-youtube-api.onrender.com/api/youtube?url=${encodeURIComponent(urlInput)}`;
-                const response = await fetch(apiURL);
-                const data = await response.json();
+                // Directly requesting public robust Cobalt API from client side
+                const response = await fetch('https://api.cobalt.tools/api/json', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: urlInput,
+                        vQuality: '720'
+                    })
+                });
 
+                const data = await response.json();
                 loading.style.display = "none";
 
-                if (data.status && data.result) {
-                    videoInfo.innerHTML = `
-                        <img src="${data.result.thumbnail}" alt="Thumbnail">
-                        <h3>${data.result.title}</h3>
+                if (data && (data.status === 'stream' || data.status === 'redirect' || data.url)) {
+                    const videoUrl = data.url || data.picker[0].url;
+
+                    downloadLinks.innerHTML = `
+                        <a href="${videoUrl}" class="download-btn" target="_blank" download="YouTube-Video.mp4">
+                            <span><i class="fa-solid fa-video" style="margin-right:8px;"></i> Download Video (HD/MP4)</span>
+                            <span><i class="fa-solid fa-download"></i></span>
+                        </a>
                     `;
-
-                    let linksHTML = '';
-                    data.result.formats.slice(0, 3).forEach(fmt => {
-                        const downloadUrl = `https://dg-youtube-api.onrender.com/api/download?url=${encodeURIComponent(fmt.url)}&title=${encodeURIComponent(data.result.title)}`;
-                        linksHTML += `
-                            <a href="${downloadUrl}" class="download-btn" download>
-                                <span><i class="fa-solid fa-video" style="margin-right:8px;"></i> Quality: ${fmt.quality || 'Standard'} (${fmt.container})</span>
-                                <span><i class="fa-solid fa-download"></i></span>
-                            </a>
-                        `;
-                    });
-
-                    downloadLinks.innerHTML = linksHTML;
                     resultBox.style.display = "block";
                 } else {
-                    errorMsg.innerText = data.error || "Could not fetch YouTube video.";
+                    errorMsg.innerText = "Could not fetch YouTube video. Make sure the link is correct!";
                     errorMsg.style.display = "block";
                 }
             } catch (error) {
                 loading.style.display = "none";
-                errorMsg.innerText = "Server is waking up. Please wait 30 seconds and try clicking Download again!";
+                errorMsg.innerText = "Failed to process YouTube link. Please try again!";
                 errorMsg.style.display = "block";
             }
         }
