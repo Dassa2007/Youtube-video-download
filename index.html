@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Song Downloader</title>
+    <title>Direct YouTube MP3 Downloader</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -41,9 +41,6 @@
             outline: none;
             box-sizing: border-box;
         }
-        input[type="text"]::placeholder {
-            color: #8a9ba8;
-        }
         button {
             width: 100%;
             padding: 12px;
@@ -69,17 +66,17 @@
 <body>
 
     <div class="container">
-        <h2>YouTube Song Downloader</h2>
-        <input type="text" id="videoUrl" placeholder="YouTube සින්දු ලින්ක් එක මෙතනට දාන්න...">
-        <button onclick="getSongLink()">Get MP3 Link</button>
-        
+        <h2>Direct MP3 Downloader</h2>
+        <input type="text" id="videoUrl" placeholder="YouTube ලින්ක් එක මෙතනට දාන්න...">
+        <button id="downloadBtn" onclick="startDownload()">Download MP3</button>
         <div id="status"></div>
     </div>
 
-        <script>
-        function getSongLink() {
+    <script>
+        async function startDownload() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
+            const downloadBtn = document.getElementById('downloadBtn');
 
             if (!urlInput) {
                 statusDiv.style.color = "#ff6b6b";
@@ -87,25 +84,40 @@
                 return;
             }
 
-            const videoIdMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-            
-            if (!videoIdMatch || !videoIdMatch[1]) {
+            statusDiv.style.color = "#8a9ba8";
+            statusDiv.innerText = "ფိုင် එක සූදානම් කරමින් පවතී, රැඳී සිටින්න...";
+            downloadBtn.disabled = true;
+
+            try {
+                // ඔබේම Vercel API එකෙන් ලින්ක් එක ලබා ගැනීම
+                const response = await fetch(`/api/download?url=${encodeURIComponent(urlInput)}`);
+                const data = await response.json();
+
+                downloadBtn.disabled = false;
+
+                if (data.success && data.download_url) {
+                    statusDiv.style.color = "#51cf66";
+                    statusDiv.innerText = "ඩවුන්ලෝඩ් වීම ආරම්භ වේ...";
+
+                    // වෙනත් සයිට් එකකට නොගොස්, බ్రව්සර් එකෙන්ම කෙලින්ම ෆයිල් එක ඩවුන්ලෝඩ් කිරීම
+                    const a = document.createElement('a');
+                    a.href = data.download_url;
+                    a.download = 'song.mp3';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                } else {
+                    statusDiv.style.color = "#ff6b6b";
+                    statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
+                }
+            } catch (err) {
+                downloadBtn.disabled = false;
                 statusDiv.style.color = "#ff6b6b";
-                statusDiv.innerText = "වලංගු නොවන YouTube ලින්ක් එකකි!";
-                return;
+                statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය.";
             }
-
-            statusDiv.style.color = "#51cf66";
-            statusDiv.innerText = "සින්දුව සූදානම් කරමින් පවතී...";
-
-            // 100% ක් වැඩ කරන SaveFrom සේවාවට ලින්ක් එක සමඟ යොමු කිරීම
-            const encodedUrl = encodeURIComponent(urlInput);
-            setTimeout(() => {
-                window.location.href = `https://en.savefrom.net/1-youtube-downloader-735/?url=${encodedUrl}`;
-            }, 1000);
         }
     </script>
-
 
 </body>
 </html>
