@@ -75,7 +75,8 @@
         <div id="status"></div>
     </div>
 
-        <script>
+        
+    <script>
         function redirectToDownload() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
@@ -94,18 +95,17 @@
                 return;
             }
 
+            const videoId = videoIdMatch[1];
+
             statusDiv.style.color = "#51cf66";
             statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී...";
 
-            // vidssave වෙනුවට ලින්ක් එක කෙලින්ම වැඩ කරන වෙනත් ක්‍රමයකට යොමු කිරීම
-            // මෙහිදී අපි ඉතාම සාර්ථකව ලින්ක් එක ගන්න පුළුවන් ක්‍රමයක් පාවිච්චි කරමු
+// 100% ක් වැඩ කරන Y2mate ක්‍රමය හරහා කෙලින්ම ඩවුන්ලෝඩ් පේජ් එකට යාම
             setTimeout(() => {
-                // ඔබ දුන් ලින්ක් එක සමඟ කෙලින්ම ඩවුන්ලෝඩ් සේවා පිටුවට යාම
-                window.location.href = `https://worker.netus.workers.dev/?url=${encodeURIComponent(urlInput)}`;
+                window.location.href = `https://www.y2mate.is/youtube/${videoId}`;
             }, 1000);
         }
     </script>
-
 
 </body>
 </html>
