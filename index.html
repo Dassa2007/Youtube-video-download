@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Downloader</title>
+    <title>YouTube Song MP3 Downloader</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1f4068, #162447);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: #fff;
             margin: 0;
             padding: 0;
@@ -17,69 +17,90 @@
             height: 100vh;
         }
         .container {
-            background: #0f1c3f;
+            background: #111e2b;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
             width: 90%;
             max-width: 450px;
             text-align: center;
         }
         h2 {
             margin-bottom: 20px;
-            color: #e43f5a;
+            color: #00f2fe;
         }
         input[type="text"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border: 2px solid #1f4068;
+            border: 2px solid #203a43;
             border-radius: 8px;
-            background: #162447;
+            background: #1b2836;
             color: #fff;
             font-size: 16px;
             outline: none;
             box-sizing: border-box;
         }
         input[type="text"]::placeholder {
-            color: #a7a9be;
+            color: #8a9ba8;
         }
-        button {
+        button, .download-btn {
             width: 100%;
             padding: 12px;
-            background: #e43f5a;
-            color: white;
+            background: #00f2fe;
+            color: #000;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
             transition: background 0.3s ease;
         }
-        button:hover {
-            background: #d0314d;
+        button:hover, .download-btn:hover {
+            background: #4facfe;
+        }
+        .download-btn {
+            background: #27ae60;
+            color: #fff;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background: #219653;
         }
         #status {
             margin-top: 15px;
             font-size: 14px;
-            color: #a7a9be;
+            color: #8a9ba8;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>YouTube Downloader</h2>
-        <input type="text" id="videoUrl" placeholder="YouTube ලින්ක් එක මෙතනට දාන්න...">
-        <button onclick="redirectToDownload()">Get Download Link</button>
+        <h2>YouTube Song Downloader</h2>
+        <input type="text" id="videoUrl" placeholder="YouTube සින්දු ලින්ක් එක මෙතනට දාන්න...">
+        <button id="searchBtn" onclick="getSongLink()">Get MP3 Link</button>
+        
         <div id="status"></div>
+
+        <!-- MP3 ඩවුන්ලෝඩ් බටන් එක -->
+        <a id="finalDownloadBtn" href="#" class="download-btn hidden">Download MP3 Now</a>
     </div>
 
-        
     <script>
-        function redirectToDownload() {
+        async function getSongLink() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
+            const finalBtn = document.getElementById('finalDownloadBtn');
+            const searchBtn = document.getElementById('searchBtn');
+
+            finalBtn.classList.add('hidden');
 
             if (!urlInput) {
                 statusDiv.style.color = "#ff6b6b";
@@ -87,23 +108,32 @@
                 return;
             }
 
-            const videoIdMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-            
-            if (!videoIdMatch || !videoIdMatch[1]) {
+            statusDiv.style.color = "#8a9ba8";
+            statusDiv.innerText = "සින්දුව සූදානම් කරමින් පවතී, රැඳී සිටින්න...";
+            searchBtn.disabled = true;
+
+            try {
+                // ඔබේ Vercel API එකට ලින්ක් එක යැවීම
+                const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
+                const data = await apiResponse.json();
+
+                searchBtn.disabled = false;
+
+                if (data.success && data.download_url) {
+                    statusDiv.style.color = "#51cf66";
+                    statusDiv.innerText = "සින්දුව සූදානම්!";
+                    
+                    finalBtn.href = data.download_url;
+                    finalBtn.classList.remove('hidden');
+                } else {
+                    statusDiv.style.color = "#ff6b6b";
+                    statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
+                }
+            } catch (err) {
+                searchBtn.disabled = false;
                 statusDiv.style.color = "#ff6b6b";
-                statusDiv.innerText = "වලංගු නොවන YouTube ලින්ක් එකකි!";
-                return;
+                statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             }
-
-            const videoId = videoIdMatch[1];
-
-            statusDiv.style.color = "#51cf66";
-            statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී...";
-
-// 100% ක් වැඩ කරන Y2mate ක්‍රමය හරහා කෙලින්ම ඩවුන්ලෝඩ් පේජ් එකට යාම
-            setTimeout(() => {
-                window.location.href = `https://www.y2mate.is/youtube/${videoId}`;
-            }, 1000);
         }
     </script>
 
