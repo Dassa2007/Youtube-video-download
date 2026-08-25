@@ -76,7 +76,7 @@
         <div id="status"></div>
     </div>
 
-    <script>
+        <script>
         function getSongLink() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
@@ -95,17 +95,17 @@
                 return;
             }
 
-            const videoId = videoIdMatch[1];
-
             statusDiv.style.color = "#51cf66";
             statusDiv.innerText = "සින්දුව සූදානම් කරමින් පවතී...";
 
-            // කිසිදු සර්වර් එරර් එකක් නොඑන ලෙස, කෙලින්ම MP3 කන්වර්ටර් සේවා පිටුවට යොමු කිරීම
+            // 100% ක් වැඩ කරන SaveFrom සේවාවට ලින්ක් එක සමඟ යොමු කිරීම
+            const encodedUrl = encodeURIComponent(urlInput);
             setTimeout(() => {
-                window.location.href = `https://www.y2mate.is/youtube/${videoId}`;
+                window.location.href = `https://en.savefrom.net/1-youtube-downloader-735/?url=${encodedUrl}`;
             }, 1000);
         }
     </script>
+
 
 </body>
 </html>
