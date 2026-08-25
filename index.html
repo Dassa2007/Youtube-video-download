@@ -44,7 +44,7 @@
         input[type="text"]::placeholder {
             color: #a7a9be;
         }
-        button {
+        button, .download-btn {
             width: 100%;
             padding: 12px;
             background: #e43f5a;
@@ -54,15 +54,28 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
             transition: background 0.3s ease;
         }
-        button:hover {
+        button:hover, .download-btn:hover {
             background: #d0314d;
+        }
+        .download-btn {
+            background: #27ae60;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background: #219653;
         }
         #status {
             margin-top: 15px;
             font-size: 14px;
             color: #a7a9be;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -71,14 +84,22 @@
     <div class="container">
         <h2>YouTube Downloader</h2>
         <input type="text" id="videoUrl" placeholder="YouTube ලින්ක් එක මෙතනට දාන්න...">
-        <button onclick="downloadVideo()">Download Now</button>
+        <button id="searchBtn" onclick="getVideoLink()">Get Download Link</button>
+        
         <div id="status"></div>
+
+        <!-- ඩවුන්ලෝඩ් ලින්ක් එක ලැබුණු පසු පෙන්වන බටන් එක -->
+        <a id="finalDownloadBtn" href="#" target="_blank" class="download-btn hidden">Click Here to Download</a>
     </div>
 
     <script>
-        async function downloadVideo() {
+        async function getVideoLink() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
+            const finalBtn = document.getElementById('finalDownloadBtn');
+            const searchBtn = document.getElementById('searchBtn');
+
+            finalBtn.classList.add('hidden');
 
             if (!urlInput) {
                 statusDiv.style.color = "#ff6b6b";
@@ -88,23 +109,27 @@
 
             statusDiv.style.color = "#a7a9be";
             statusDiv.innerText = "ලින්ක් එක සකස් කරමින් පවතී, රැඳී සිටින්න...";
+            searchBtn.disabled = true;
 
             try {
-                // ඔබගේ Vercel API එකට ඉල්ලීම යැවීම
                 const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
                 const data = await apiResponse.json();
 
+                searchBtn.disabled = false;
+
                 if (data.success && data.download_url) {
                     statusDiv.style.color = "#51cf66";
-                    statusDiv.innerText = "ඩවුන්ලෝඩ් වීම ආරම්භ වේ...";
+                    statusDiv.innerText = "වීඩියෝ එක සූදානම්!";
                     
-                    // වෙනත් සයිට් වලට නොගොස් කෙලින්ම ඩවුන්ලෝඩ් වීම සඳහා
-                    window.location.href = data.download_url;
+                    // ඩවුන්ලෝඩ් බටන් එකට ලින්ක් එක ඇතුළත් කර එය පෙන්වීම
+                    finalBtn.href = data.download_url;
+                    finalBtn.classList.remove('hidden');
                 } else {
                     statusDiv.style.color = "#ff6b6b";
                     statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
                 }
             } catch (err) {
+                searchBtn.disabled = false;
                 statusDiv.style.color = "#ff6b6b";
                 statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             }
