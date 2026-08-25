@@ -44,7 +44,7 @@
         input[type="text"]::placeholder {
             color: #a7a9be;
         }
-        button, .download-btn {
+        button {
             width: 100%;
             padding: 12px;
             background: #e43f5a;
@@ -54,28 +54,15 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            box-sizing: border-box;
             transition: background 0.3s ease;
         }
-        button:hover, .download-btn:hover {
+        button:hover {
             background: #d0314d;
-        }
-        .download-btn {
-            background: #27ae60;
-            margin-top: 10px;
-        }
-        .download-btn:hover {
-            background: #219653;
         }
         #status {
             margin-top: 15px;
             font-size: 14px;
             color: #a7a9be;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
@@ -84,22 +71,14 @@
     <div class="container">
         <h2>YouTube Downloader</h2>
         <input type="text" id="videoUrl" placeholder="YouTube ලින්ක් එක මෙතනට දාන්න...">
-        <button id="searchBtn" onclick="getVideoLink()">Get Download Link</button>
-        
+        <button onclick="redirectToDownload()">Get Download Link</button>
         <div id="status"></div>
-
-        <!-- ඩවුන්ලෝඩ් බටන් එක -->
-        <a id="finalDownloadBtn" href="#" class="download-btn hidden">Download Video Now</a>
     </div>
 
     <script>
-        async function getVideoLink() {
+        function redirectToDownload() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
-            const finalBtn = document.getElementById('finalDownloadBtn');
-            const searchBtn = document.getElementById('searchBtn');
-
-            finalBtn.classList.add('hidden');
 
             if (!urlInput) {
                 statusDiv.style.color = "#ff6b6b";
@@ -107,32 +86,23 @@
                 return;
             }
 
-            statusDiv.style.color = "#a7a9be";
-            statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී, රැඳී සිටින්න...";
-            searchBtn.disabled = true;
-
-            try {
-                // ඔබේ Vercel API එකට ලින්ක් එක යැවීම (ඔබේ සැබෑ Vercel ලින්ක් එක මෙහි ඇති බව තහවුරු කරගන්න)
-                const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
-                const data = await apiResponse.json();
-
-                searchBtn.disabled = false;
-
-                if (data.success && data.download_url) {
-                    statusDiv.style.color = "#51cf66";
-                    statusDiv.innerText = "වීඩියෝ එක සූදානම්!";
-                    
-                    finalBtn.href = data.download_url;
-                    finalBtn.classList.remove('hidden');
-                } else {
-                    statusDiv.style.color = "#ff6b6b";
-                    statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
-                }
-            } catch (err) {
-                searchBtn.disabled = false;
+            // යූටියුබ් ලින්ක් එකක්දැයි පරීක්ෂා කිරීම
+            const videoIdMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            
+            if (!videoIdMatch || !videoIdMatch[1]) {
                 statusDiv.style.color = "#ff6b6b";
-                statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+                statusDiv.innerText = "වලංගු නොවන YouTube ලින්ක් එකකි!";
+                return;
             }
+
+            statusDiv.style.color = "#51cf66";
+            statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී...";
+
+            // කිසිදු එරර් එකක් නොමැතිව, දුන් ලින්ක් එක සමඟ කෙලින්ම ඩවුන්ලෝඩ් සේවා පිටුවට යැවීම
+            const encodedUrl = encodeURIComponent(urlInput);
+            setTimeout(() => {
+                window.location.href = `https://vidssave.com/?url=${encodedUrl}`;
+            }, 1000);
         }
     </script>
 
