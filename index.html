@@ -3,285 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DG YOUTUBE DOWNLOADER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>YouTube Video Downloader</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e293b, #090d16);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .container {
-            max-width: 720px;
-            margin: 40px auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            width: 90%;
-        }
-
-        .logo h1 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 5px;
-            font-weight: 800;
-        }
-
-        .logo h1 span {
-            color: #ff0000;
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-        }
-
-        .logo p {
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 6px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .input-group input {
-            flex: 1;
-            padding: 14px 18px;
-            border: none;
-            outline: none;
-            border-radius: 10px;
-            background: transparent;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .input-group input::placeholder {
-            color: #888;
-        }
-
-        .input-group button {
-            padding: 0 30px;
-            border: none;
-            outline: none;
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-            color: #fff;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s ease;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
-        }
-
-        .input-group button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.6);
-        }
-
-        .loading {
-            display: none;
-            margin: 25px 0;
-        }
-
-        .spinner {
-            width: 45px;
-            height: 45px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #ff0000;
-            border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .result-box {
-            display: none;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 25px;
-            border-radius: 16px;
-            margin-top: 25px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .download-btn {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 14px 20px;
-            background: #ff0000;
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 700;
-            margin-top: 10px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
-        }
-
-        .download-btn:hover {
-            background: #cc0000;
-            transform: translateY(-2px);
-        }
-
-        .error-msg {
-            color: #ff6b6b;
-            margin-top: 15px;
-            font-weight: 500;
-            display: none;
-            background: rgba(255, 107, 107, 0.1);
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 107, 107, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-            font-size: 0.85rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        @media (max-width: 576px) {
-            .input-group {
-                flex-direction: column;
-                background: transparent;
-                border: none;
-                padding: 0;
-                gap: 10px;
-            }
-            .input-group input {
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.15);
-            }
-            .input-group button {
-                padding: 15px;
-                width: 100%;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans">
 
-    <div class="container">
-        <div class="logo">
-            <h1>DG <span>YOUTUBE</span></h1>
-            <p>Paste YouTube video link below to download!</p>
-        </div>
+    <!-- Header -->
+    <header class="py-6 text-center border-b border-slate-800">
+        <h1 class="text-3xl font-extrabold tracking-wider text-red-500">
+            <i class="fa-brands fa-youtube mr-2"></i>YT Downloader
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">Download your favorite YouTube videos instantly</p>
+    </header>
 
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Paste YouTube video link here...">
-            <button onclick="downloadYoutube()">
-                <i class="fa-solid fa-download"></i> Download
-            </button>
-        </div>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p style="margin-top: 12px; font-size: 0.9rem; color: #aaa;" id="loadingText">Fetching video links...</p>
-        </div>
-
-        <div class="error-msg" id="errorMsg"></div>
-
-        <div class="result-box" id="resultBox">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #ff0000; font-weight: 600;">
-                <i class="fa-solid fa-circle-check"></i> Video Ready to Download!
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 max-w-xl my-auto py-10">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-2xl">
+            <div class="mb-4">
+                <label class="block text-slate-300 text-sm font-medium mb-2">Paste YouTube Link Here:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." 
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 text-sm">
+                    <button onclick="getDownloadLink()" id="btnText" 
+                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition duration-200 cursor-pointer text-sm shrink-0">
+                        Search
+                    </button>
+                </div>
             </div>
-            <div id="downloadLinks"></div>
-        </div>
-    </div>
 
-    <footer>
-        <p>&copy; 2026 DG DOWNLOADER. All Rights Reserved.</p>
+            <!-- Loading Spinner -->
+            <div id="loader" class="hidden text-center py-6">
+                <i class="fa-solid fa-spinner fa-spin text-red-500 text-3xl"></i>
+                <p class="text-slate-400 text-xs mt-2">Fetching video details...</p>
+            </div>
+
+            <!-- Result Box -->
+            <div id="resultBox" class="hidden mt-6 p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
+                <p class="text-green-400 font-medium mb-3 text-sm"><i class="fa-solid fa-circle-check mr-1"></i> Video found successfully!</p>
+                <a id="downloadBtn" href="#" target="_blank" 
+                    class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-bold transition duration-200 text-sm w-full">
+                    <i class="fa-solid fa-download mr-2"></i> Download Video
+                </a>
+            </div>
+
+            <!-- Error Box -->
+            <div id="errorBox" class="hidden mt-6 p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-center text-red-400 text-sm">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> <span id="errorText">Something went wrong!</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-slate-500 text-xs border-t border-slate-900">
+        Powered by Your Custom Vercel API &copy; 2026
     </footer>
 
+    <!-- JavaScript Script -->
     <script>
-        async function downloadYoutube() {
-            const urlInput = document.getElementById('urlInput').value.trim();
-            const loading = document.getElementById('loading');
-            const loadingText = document.getElementById('loadingText');
+        async function getDownloadLink() {
+            const urlInput = document.getElementById('videoUrl').value.trim();
+            const loader = document.getElementById('loader');
             const resultBox = document.getElementById('resultBox');
-            const errorMsg = document.getElementById('errorMsg');
-            const downloadLinks = document.getElementById('downloadLinks');
+            const errorBox = document.getElementById('errorBox');
+            const errorText = document.getElementById('errorText');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const btnText = document.getElementById('btnText');
 
-            resultBox.style.display = "none";
-            errorMsg.style.display = "none";
-            downloadLinks.innerHTML = "";
+            resultBox.classList.add('hidden');
+            errorBox.classList.add('hidden');
 
             if (!urlInput) {
-                errorMsg.innerText = "Please enter a valid YouTube URL!";
-                errorMsg.style.display = "block";
+                errorText.innerText = "Please enter a valid YouTube URL!";
+                errorBox.classList.remove('hidden');
                 return;
             }
 
-            loading.style.display = "block";
-            loadingText.innerText = "Processing video...";
+            loader.classList.remove('hidden');
+            btnText.disabled = true;
 
             try {
-                // Using stable public Cobalt API directly from frontend to bypass server blocks
-                const response = await fetch('https://co.wuk.sh/api/json', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        url: urlInput,
-                        vQuality: '720',
-                        filenamePattern: 'classic'
-                    })
-                });
-
+                // ඔයාගේ Vercel API ලින්ක් එක මෙතනට දාලා තියෙනවා
+                const apiUrl = `https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
+                
+                const response = await fetch(apiUrl);
                 const data = await response.json();
-                loading.style.display = "none";
 
-                if (data && (data.url || data.picker)) {
-                    const downloadUrl = data.url || data.picker[0].url;
-                    downloadLinks.innerHTML = `
-                        <a href="${downloadUrl}" class="download-btn" target="_blank" download="YouTube-Video.mp4">
-                            <span><i class="fa-solid fa-video" style="margin-right:8px;"></i> Download Video (HD/MP4)</span>
-                            <span><i class="fa-solid fa-download"></i></span>
-                        </a>
-                    `;
-                    resultBox.style.display = "block";
+                loader.classList.add('hidden');
+                btnText.disabled = false;
+
+                if (data.success && data.download_url) {
+                    downloadBtn.href = data.download_url;
+                    resultBox.classList.remove('hidden');
                 } else {
-                    errorMsg.innerText = "Could not fetch video. Try another link!";
-                    errorMsg.style.display = "block";
+                    errorText.innerText = data.error || "Could not fetch download link!";
+                    errorBox.classList.remove('hidden');
                 }
-            } catch (error) {
-                loading.style.display = "none";
-                errorMsg.innerText = "Something went wrong. Please try again!";
-                errorMsg.style.display = "block";
+            } catch (err) {
+                loader.classList.add('hidden');
+                btnText.disabled = false;
+                errorText.innerText = "Connection failed. Please try again.";
+                errorBox.classList.remove('hidden');
             }
         }
     </script>
