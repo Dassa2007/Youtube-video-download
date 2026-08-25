@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Song MP3 Downloader</title>
+    <title>YouTube Song Downloader</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,7 +44,7 @@
         input[type="text"]::placeholder {
             color: #8a9ba8;
         }
-        button, .download-btn {
+        button {
             width: 100%;
             padding: 12px;
             background: #00f2fe;
@@ -54,29 +54,15 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            box-sizing: border-box;
             transition: background 0.3s ease;
         }
-        button:hover, .download-btn:hover {
+        button:hover {
             background: #4facfe;
-        }
-        .download-btn {
-            background: #27ae60;
-            color: #fff;
-            margin-top: 10px;
-        }
-        .download-btn:hover {
-            background: #219653;
         }
         #status {
             margin-top: 15px;
             font-size: 14px;
             color: #8a9ba8;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
@@ -85,22 +71,15 @@
     <div class="container">
         <h2>YouTube Song Downloader</h2>
         <input type="text" id="videoUrl" placeholder="YouTube සින්දු ලින්ක් එක මෙතනට දාන්න...">
-        <button id="searchBtn" onclick="getSongLink()">Get MP3 Link</button>
+        <button onclick="getSongLink()">Get MP3 Link</button>
         
         <div id="status"></div>
-
-        <!-- MP3 ඩවුන්ලෝඩ් බටන් එක -->
-        <a id="finalDownloadBtn" href="#" class="download-btn hidden">Download MP3 Now</a>
     </div>
 
     <script>
-        async function getSongLink() {
+        function getSongLink() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
-            const finalBtn = document.getElementById('finalDownloadBtn');
-            const searchBtn = document.getElementById('searchBtn');
-
-            finalBtn.classList.add('hidden');
 
             if (!urlInput) {
                 statusDiv.style.color = "#ff6b6b";
@@ -108,32 +87,23 @@
                 return;
             }
 
-            statusDiv.style.color = "#8a9ba8";
-            statusDiv.innerText = "සින්දුව සූදානම් කරමින් පවතී, රැඳී සිටින්න...";
-            searchBtn.disabled = true;
-
-            try {
-                // ඔබේ Vercel API එකට ලින්ක් එක යැවීම
-                const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
-                const data = await apiResponse.json();
-
-                searchBtn.disabled = false;
-
-                if (data.success && data.download_url) {
-                    statusDiv.style.color = "#51cf66";
-                    statusDiv.innerText = "සින්දුව සූදානම්!";
-                    
-                    finalBtn.href = data.download_url;
-                    finalBtn.classList.remove('hidden');
-                } else {
-                    statusDiv.style.color = "#ff6b6b";
-                    statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
-                }
-            } catch (err) {
-                searchBtn.disabled = false;
+            const videoIdMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+            
+            if (!videoIdMatch || !videoIdMatch[1]) {
                 statusDiv.style.color = "#ff6b6b";
-                statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
+                statusDiv.innerText = "වලංගු නොවන YouTube ලින්ක් එකකි!";
+                return;
             }
+
+            const videoId = videoIdMatch[1];
+
+            statusDiv.style.color = "#51cf66";
+            statusDiv.innerText = "සින්දුව සූදානම් කරමින් පවතී...";
+
+            // කිසිදු සර්වර් එරර් එකක් නොඑන ලෙස, කෙලින්ම MP3 කන්වර්ටර් සේවා පිටුවට යොමු කිරීම
+            setTimeout(() => {
+                window.location.href = `https://www.y2mate.is/youtube/${videoId}`;
+            }, 1000);
         }
     </script>
 
