@@ -75,7 +75,7 @@
         <div id="status"></div>
     </div>
 
-    <script>
+        <script>
         function redirectToDownload() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const statusDiv = document.getElementById('status');
@@ -86,7 +86,6 @@
                 return;
             }
 
-            // යූටියුබ් ලින්ක් එකක්දැයි පරීක්ෂා කිරීම
             const videoIdMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
             
             if (!videoIdMatch || !videoIdMatch[1]) {
@@ -98,13 +97,15 @@
             statusDiv.style.color = "#51cf66";
             statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී...";
 
-            // කිසිදු එරර් එකක් නොමැතිව, දුන් ලින්ක් එක සමඟ කෙලින්ම ඩවුන්ලෝඩ් සේවා පිටුවට යැවීම
-            const encodedUrl = encodeURIComponent(urlInput);
+            // vidssave වෙනුවට ලින්ක් එක කෙලින්ම වැඩ කරන වෙනත් ක්‍රමයකට යොමු කිරීම
+            // මෙහිදී අපි ඉතාම සාර්ථකව ලින්ක් එක ගන්න පුළුවන් ක්‍රමයක් පාවිච්චි කරමු
             setTimeout(() => {
-                window.location.href = `https://vidssave.com/?url=${encodedUrl}`;
+                // ඔබ දුන් ලින්ක් එක සමඟ කෙලින්ම ඩවුන්ලෝඩ් සේවා පිටුවට යාම
+                window.location.href = `https://worker.netus.workers.dev/?url=${encodeURIComponent(urlInput)}`;
             }, 1000);
         }
     </script>
+
 
 </body>
 </html>
