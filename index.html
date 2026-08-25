@@ -88,8 +88,8 @@
         
         <div id="status"></div>
 
-        <!-- ඩවුන්ලෝඩ් ලින්ක් එක ලැබුණු පසු පෙන්වන බටන් එක -->
-        <a id="finalDownloadBtn" href="#" target="_blank" class="download-btn hidden">Click Here to Download</a>
+        <!-- ඩවුන්ලෝඩ් බටන් එක -->
+        <a id="finalDownloadBtn" href="#" class="download-btn hidden">Download Video Now</a>
     </div>
 
     <script>
@@ -108,10 +108,11 @@
             }
 
             statusDiv.style.color = "#a7a9be";
-            statusDiv.innerText = "ලින්ක් එක සකස් කරමින් පවතී, රැඳී සිටින්න...";
+            statusDiv.innerText = "වීඩියෝ එක සූදානම් කරමින් පවතී, රැඳී සිටින්න...";
             searchBtn.disabled = true;
 
             try {
+                // ඔබේ Vercel API එකට ලින්ක් එක යැවීම (ඔබේ සැබෑ Vercel ලින්ක් එක මෙහි ඇති බව තහවුරු කරගන්න)
                 const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
                 const data = await apiResponse.json();
 
@@ -121,7 +122,6 @@
                     statusDiv.style.color = "#51cf66";
                     statusDiv.innerText = "වීඩියෝ එක සූදානම්!";
                     
-                    // ඩවුන්ලෝඩ් බටන් එකට ලින්ක් එක ඇතුළත් කර එය පෙන්වීම
                     finalBtn.href = data.download_url;
                     finalBtn.classList.remove('hidden');
                 } else {
