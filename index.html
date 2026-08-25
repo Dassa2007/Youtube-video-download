@@ -4,108 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Video Downloader</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f4068, #162447);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #0f1c3f;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #e43f5a;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #1f4068;
+            border-radius: 8px;
+            background: #162447;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        input[type="text"]::placeholder {
+            color: #a7a9be;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #e43f5a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #d0314d;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #a7a9be;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between font-sans">
+<body>
 
-    <!-- Header -->
-    <header class="py-6 text-center border-b border-slate-800">
-        <h1 class="text-3xl font-extrabold tracking-wider text-red-500">
-            <i class="fa-brands fa-youtube mr-2"></i>YT Downloader
-        </h1>
-        <p class="text-slate-400 text-sm mt-1">Download your favorite YouTube videos instantly</p>
-    </header>
+    <div class="container">
+        <h2>YouTube Downloader</h2>
+        <input type="text" id="videoUrl" placeholder="YouTube ලින්ක් එක මෙතනට දාන්න...">
+        <button onclick="downloadVideo()">Download Now</button>
+        <div id="status"></div>
+    </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 max-w-xl my-auto py-10">
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-2xl">
-            <div class="mb-4">
-                <label class="block text-slate-300 text-sm font-medium mb-2">Paste YouTube Link Here:</label>
-                <div class="flex gap-2">
-                    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." 
-                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 text-sm">
-                    <button onclick="getDownloadLink()" id="btnText" 
-                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition duration-200 cursor-pointer text-sm shrink-0">
-                        Search
-                    </button>
-                </div>
-            </div>
-
-            <!-- Loading Spinner -->
-            <div id="loader" class="hidden text-center py-6">
-                <i class="fa-solid fa-spinner fa-spin text-red-500 text-3xl"></i>
-                <p class="text-slate-400 text-xs mt-2">Fetching video details...</p>
-            </div>
-
-            <!-- Result Box -->
-            <div id="resultBox" class="hidden mt-6 p-4 bg-slate-950 border border-slate-800 rounded-xl text-center">
-                <p class="text-green-400 font-medium mb-3 text-sm"><i class="fa-solid fa-circle-check mr-1"></i> Video found successfully!</p>
-                <a id="downloadBtn" href="#" target="_blank" 
-                    class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-bold transition duration-200 text-sm w-full">
-                    <i class="fa-solid fa-download mr-2"></i> Download Video
-                </a>
-            </div>
-
-            <!-- Error Box -->
-            <div id="errorBox" class="hidden mt-6 p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-center text-red-400 text-sm">
-                <i class="fa-solid fa-triangle-exclamation mr-1"></i> <span id="errorText">Something went wrong!</span>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="py-4 text-center text-slate-500 text-xs border-t border-slate-900">
-        Powered by Your Custom Vercel API &copy; 2026
-    </footer>
-
-    <!-- JavaScript Script -->
     <script>
-        async function getDownloadLink() {
+        async function downloadVideo() {
             const urlInput = document.getElementById('videoUrl').value.trim();
-            const loader = document.getElementById('loader');
-            const resultBox = document.getElementById('resultBox');
-            const errorBox = document.getElementById('errorBox');
-            const errorText = document.getElementById('errorText');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const btnText = document.getElementById('btnText');
-
-            resultBox.classList.add('hidden');
-            errorBox.classList.add('hidden');
+            const statusDiv = document.getElementById('status');
 
             if (!urlInput) {
-                errorText.innerText = "Please enter a valid YouTube URL!";
-                errorBox.classList.remove('hidden');
+                statusDiv.style.color = "#ff6b6b";
+                statusDiv.innerText = "කරුණාකර YouTube ලින්ක් එකක් ඇතුළත් කරන්න!";
                 return;
             }
 
-            loader.classList.remove('hidden');
-            btnText.disabled = true;
+            statusDiv.style.color = "#a7a9be";
+            statusDiv.innerText = "ලින්ක් එක සකස් කරමින් පවතී, රැඳී සිටින්න...";
 
             try {
-                // ඔයාගේ Vercel API ලින්ක් එක මෙතනට දාලා තියෙනවා
-                const apiUrl = `https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`;
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                loader.classList.add('hidden');
-                btnText.disabled = false;
+                // ඔබගේ Vercel API එකට ඉල්ලීම යැවීම
+                const apiResponse = await fetch(`https://youtube-api-vercle.vercel.app/download?url=${encodeURIComponent(urlInput)}`);
+                const data = await apiResponse.json();
 
                 if (data.success && data.download_url) {
-                    downloadBtn.href = data.download_url;
-                    resultBox.classList.remove('hidden');
+                    statusDiv.style.color = "#51cf66";
+                    statusDiv.innerText = "ඩවුන්ලෝඩ් වීම ආරම්භ වේ...";
+                    
+                    // වෙනත් සයිට් වලට නොගොස් කෙලින්ම ඩවුන්ලෝඩ් වීම සඳහා
+                    window.location.href = data.download_url;
                 } else {
-                    errorText.innerText = data.error || "Could not fetch download link!";
-                    errorBox.classList.remove('hidden');
+                    statusDiv.style.color = "#ff6b6b";
+                    statusDiv.innerText = "දෝෂයක් සිදු විය: " + (data.error || "අසාර්ථකයි");
                 }
             } catch (err) {
-                loader.classList.add('hidden');
-                btnText.disabled = false;
-                errorText.innerText = "Connection failed. Please try again.";
-                errorBox.classList.remove('hidden');
+                statusDiv.style.color = "#ff6b6b";
+                statusDiv.innerText = "සර්වර් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.";
             }
         }
     </script>
+
 </body>
 </html>
